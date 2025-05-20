@@ -18,7 +18,7 @@
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="index.html">inicio</a></li>
-            <li><a class="dropdown-item" href="">productos</a></li>
+            <li><a class="dropdown-item" href="lista de productos.html">productos</a></li>
              
         </ul>
     </div>
@@ -38,7 +38,7 @@
             <h6>cuenta</h6></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active mx-3 " aria-current="page" href=""> 
+          <a class="nav-link active mx-3 " aria-current="page" href="Carrito.html"> 
             <img src="/images/3144456.png" class=" rounded " alt=""> 
             <h6>compra</h6></a>
         </li>
@@ -115,17 +115,28 @@ document.addEventListener('DOMContentLoaded', function() {
     contenedor.appendChild(card);
   });
 
-  // Evento para agregar al carrito
-  contenedor.addEventListener('click', function(e) {
-    if (e.target.classList.contains('agregar-carrito') || e.target.closest('.agregar-carrito')) {
-      const btn = e.target.closest('.agregar-carrito');
-      const index = parseInt(btn.getAttribute('data-index'));
-      const producto = productos[index];
+// Guardar el carrito automáticamente al agregar un producto
+contenedor.addEventListener('click', function(e) {
+  if (e.target.classList.contains('agregar-carrito') || e.target.closest('.agregar-carrito')) {
+    const btn = e.target.closest('.agregar-carrito');
+    const index = parseInt(btn.getAttribute('data-index'));
+    const producto = productos[index];
 
+    // Verifica si ya está en el carrito
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    const existente = carrito.find(p => p.nombre === producto.nombre);
+    if (existente) {
+      existente.cantidad += 1;
+    } else {
+      producto.cantidad = 1;
       carrito.push(producto);
-      alert(`"${producto.nombre}" agregado al carrito`);
     }
-  });
+
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    alert(`"${producto.nombre}" agregado al carrito`);
+  }
+});
 
   // Guardar el carrito en localStorage
   document.getElementById('guardarCarritoBtn').addEventListener('click', function() {
