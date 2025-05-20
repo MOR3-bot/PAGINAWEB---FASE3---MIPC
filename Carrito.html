@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+ header {
+            background: #0097dd;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .menu-icon {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        .icons {
+            display: flex;
+            gap: 10px;
+            margin-right: 10px;
+        }
+        .icons div {
+            width: 24px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 5px;
+        }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #000000;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #50a5e7;
+    }
+
+    .btn-eliminar {
+      cursor: pointer;
+      color: red;
+      font-weight: bold;
+    }
+
+    #total {
+      font-size: 24px;
+      text-align: right;
+      margin-right: 10%;
+    }
+
+    #pagar {
+      display: block;
+      color: blue;
+      margin: 20px auto;
+      padding: 10px 30px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+     <header>
+     <div class="menu-icons">
+         <div class="menu-icon">☰</div>
+         <div class="icons"</div> 
+    <img src="Sesion.jpg" alt="Inicio de sesion/registro" class="icons" style="width: 20px; height: 20px;">>
+    <img src="Gestion.jpg" alt="Gestion de usuario" class="icons" style="width: 20px; height: 20px;">>
+    <img src="Carrito.jpg" alt="Carrito" class="icons"style="width: 20px; height: 20px;">>
+    <img src="Admin.jpg" alt="Panel de administrador/moderador" class="icons" style="width: 20px; height: 20px;">>
+    </div>
+</header>
+</header>
+</div>
+
+<h2 style="text-align: center;">Mi Carrito</h2>
+
+<table id="tablaCarrito">
+  <thead>
+    <tr>
+      <th>Cantidad</th>
+      <th>Nombre del Producto</th>
+      <th>Precio</th>
+      <th>Eliminar</th>
+    </tr>
+  </thead>
+  <tbody id="cuerpoTabla">
+    <!-- Productos del carrito se agregarán aquí dinámicamente -->
+  </tbody>
+</table>
+
+<div id="total">Total: $<span id="totalPrecio">0.00</span></div>
+
+<button id="pagar">Pagar</button>
+
+<script>
+
+
+  function renderizarCarrito() {
+    const cuerpoTabla = document.getElementById("cuerpoTabla");
+    cuerpoTabla.innerHTML = ""; // Limpiar
+
+    let total = 0;
+
+    carrito.forEach((producto, index) => {
+      const fila = document.createElement("tr");
+
+      const celdaCantidad = document.createElement("td");
+      celdaCantidad.textContent = producto.cantidad;
+
+      const celdaNombre = document.createElement("td");
+      celdaNombre.textContent = producto.nombre;
+
+      const celdaPrecio = document.createElement("td");
+      const subtotal = producto.precio * producto.cantidad;
+      celdaPrecio.textContent = `$${subtotal.toFixed(2)}`;
+      total += subtotal;
+
+      const celdaEliminar = document.createElement("td");
+      const botonEliminar = document.createElement("button");
+      botonEliminar.textContent = "🗑️";
+      botonEliminar.className = "btn-eliminar";
+      botonEliminar.onclick = () => {
+        carrito.splice(index, 1);
+        renderizarCarrito();
+      };
+      celdaEliminar.appendChild(botonEliminar);
+
+      fila.appendChild(celdaCantidad);
+      fila.appendChild(celdaNombre);
+      fila.appendChild(celdaPrecio);
+      fila.appendChild(celdaEliminar);
+
+      cuerpoTabla.appendChild(fila);
+    });
+
+    document.getElementById("totalPrecio").textContent = total.toFixed(2);
+  }
+
+  document.getElementById("pagar").addEventListener("click", () => {
+    alert("¡Gracias por tu compra!");
+    carrito = [];
+    renderizarCarrito();
+  });
+
+  // Inicializar
+  renderizarCarrito();
+</script>
+
+</body>
+</html>
