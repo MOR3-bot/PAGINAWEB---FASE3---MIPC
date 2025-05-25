@@ -1,0 +1,34 @@
+<?php
+session_start();
+header('Content-Type: application/json');
+
+if (!isset($_SESSION['UsuarioID'])) {
+    echo json_encode(['total' => 0]);
+    exit;
+}
+
+$usuarioID = $_SESSION['UsuarioID'];
+
+$host = 'localhost';
+$db = 'MiPC5';
+$user = 'root';
+$pass = '1234';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
+
+    $stmt = $pdo->prepare("SELECT SUM(Cantidad) AS total FROM Carrito WHERE UsuarioID = ?");
+    $stmt->execute([$usuarioID]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode(['total' => (int) $result['total']]);
+
+} catch (PDOException $e) {
+    echo json_encode(['total' => 0, 'error' => $e->getMessage()]);
+}
+?>
