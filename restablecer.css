@@ -1,4 +1,4 @@
-/* Estilos específicos para restablecer_contrasena.html */
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -47,7 +47,7 @@ label {
 
 .input-container input {
     width: 100%;
-    padding: 10px 40px 10px 10px; /* Ajuste para el ícono */
+    padding: 10px 40px 10px 10px; 
     font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -113,7 +113,7 @@ p a:hover {
     text-align: center;
     font-size: 0.95rem;
 }
-/* Form Fields */
+
 .form-group {
     position: relative;
     margin-bottom: 20px;
@@ -131,7 +131,7 @@ p a:hover {
 
 .form-group input {
     width: 100%;
-    padding: 14px 14px 14px 45px; /* Espacio para el ícono de la izquierda */
+    padding: 14px 14px 14px 45px; 
     border: 2px solid rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.05);
@@ -151,7 +151,7 @@ p a:hover {
     color: #666;
 }
 
-/* Password Toggle Icon */
+
 .toggle-password {
     position: absolute;
     right: 10px;

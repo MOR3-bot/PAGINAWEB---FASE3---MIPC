@@ -74,17 +74,17 @@ session_start();
 </head>
 <body>
 
-<!-- Navbar con sesión -->
+
 <nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
   <div class="container-fluid">
     <div class="dropdown">
-      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="images/17654.png" class="barras rounded" alt="">
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="index.php">Inicio</a></li>
-        <li><a class="dropdown-item" href="lista_de_productos.php">Productos</a></li>
-      </ul>
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+         <img src="images/17654.png" class="barras rounded" alt="">
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="index.php">inicio</a></li>
+            <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
+        </ul>
     </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -92,29 +92,33 @@ session_start();
     <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active mx-3" href="Gestion de Usuario.php">
-            <img src="<?php echo $_SESSION['ImagenPerfil'] ?? 'images/6063673.png'; ?>" class="rounded" style="width: 30px;" alt="">
-            <h6><?php echo $_SESSION['NombreUsuario'] ?? 'Cuenta'; ?></h6>
+          <a class="nav-link active mx-3" aria-current="page" href="Gestion de Usuario.php"> 
+            <img src="images/6063673.png" class="rounded" alt=""> 
+            <h6>cuenta</h6>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active mx-3" href="Carrito.php">
-            <img src="images/3144456.png" class="rounded" alt="">
-            <h6>Compra</h6>
+          <a class="nav-link active mx-3" aria-current="page" href="lista_de_productos.php"> 
+            <img src="images/3144456.png" class="rounded" alt=""> 
+            <h6>compra</h6>
           </a>
         </li>
-        <?php if (isset($_SESSION['RolNombre']) && ($_SESSION['RolNombre'] === 'administrador' || $_SESSION['RolNombre'] === 'moderador')): ?>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" href="dashboard.php">
-            <img src="images/30240.png" class="rounded" alt="">
-            <h6>Admin</h6>
-          </a>
-        </li>
+
+        <?php if (isset($_SESSION['RolNombre']) && 
+                  ($_SESSION['RolNombre'] === 'Administrador' || $_SESSION['RolNombre'] === 'Moderador')): ?>
+          <li class="nav-item">
+            <a class="nav-link active mx-3" aria-current="page" href="dashboard.php"> 
+              <img src="images/30240.png" class="rounded" alt=""> 
+              <h6>admin</h6>
+            </a>
+          </li>
         <?php endif; ?>
+
       </ul>
     </div>
   </div>
 </nav>
+
 
 <main>
   <h2>Sobre nosotros</h2>
@@ -145,7 +149,7 @@ session_start();
 
 <footer>
   <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
-  <a class="nav-link active mx-3" href="Quienes_somos.html">
+  <a class="nav-link active mx-3" href="Quienes_somos.php">
      <h6>saber mas de nosotros</h6>
   </a>
 

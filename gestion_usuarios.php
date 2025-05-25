@@ -1,9 +1,10 @@
 <?php
+session_start();
 // Conexión a la base de datos
 $host = 'localhost';
 $dbname = 'MiPC5';
 $user = 'root';
-$pass = '1234'; // Cambia según tu config
+$pass = '1234'; 
 
 
 $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
@@ -99,7 +100,6 @@ $roles = $pdo->query("SELECT * FROM Roles")->fetchAll(PDO::FETCH_ASSOC);
 <h2 class="mb-4 text-center">Gestión de Usuarios</h2>
 
 <div class="row">
-  <!-- Lista usuarios -->
   <div class="col-lg-6">
     <form class="input-group mb-3" method="get">
       <input type="text" class="form-control" placeholder="Buscar por nombre o usuario..." name="buscar" value="<?= htmlspecialchars($buscar) ?>" />
@@ -135,7 +135,7 @@ $roles = $pdo->query("SELECT * FROM Roles")->fetchAll(PDO::FETCH_ASSOC);
     </table>
   </div>
 
-  <!-- Formulario editar usuario -->
+  
   <div class="col-lg-6">
     <div class="card p-4">
       <h4 class="mb-3">Editar Usuario</h4>
@@ -201,7 +201,6 @@ function editarUsuario(data) {
 }
 
 function validarFormulario() {
-  // Aquí puedes agregar validaciones extra si quieres
   return true;
 }
 </script>

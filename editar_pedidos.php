@@ -39,7 +39,6 @@ try {
 
     // Si nuevoEstado es 5 y antes no era 5, también actualizar stock
     if ($nuevoEstado === 5 && $estadoActual != 5) {
-        // Aquí va el código para actualizar stock que tenías fuera
         $stmtDetalles = $pdo->prepare("SELECT ProductoID, Cantidad FROM DetallesPedido WHERE PedidoID = ?");
         $stmtDetalles->execute([$pedidoID]);
         $detalles = $stmtDetalles->fetchAll(PDO::FETCH_ASSOC);
@@ -70,7 +69,6 @@ try {
 
     // Notificación si está finalizado (3)
     if ($nuevoEstado === 3) {
-        // Código para notificación
     }
 
     $pdo->commit();
@@ -170,7 +168,7 @@ try {
       <th>Total</th>
       <th>Estado</th>
       <th>Cambiar Estado</th>
-      <th>Ver detalles</th> <!-- Nueva columna -->
+      <th>Ver detalles</th> 
     </tr>
   </thead>
   <tbody>

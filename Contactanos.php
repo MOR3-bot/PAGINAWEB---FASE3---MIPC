@@ -161,7 +161,7 @@ try {
 </body>
 <footer>
   <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
-  <a class="nav-link active mx-3" href="Quienes_somos.html">
+  <a class="nav-link active mx-3" href="Quienes_somos.php">
      <h6>saber mas de nosotros</h6>
   </a>
 

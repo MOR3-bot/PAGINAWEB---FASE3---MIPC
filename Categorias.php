@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Conexión a la base de datos
 $host = 'localhost';
 $db = 'MiPC5';
@@ -111,7 +112,7 @@ $categorias = $pdo->query("SELECT * FROM Categorias")->fetchAll(PDO::FETCH_ASSOC
 
 <div class="container my-5">
   <div class="row">
-    <!-- Lista de categorías -->
+    
     <div class="col-lg-6 mb-4">
       <div class="card border border-dark text-dark rounded p-4">
         <h2 class="text-center mb-4">Lista de categorías</h2>
@@ -151,7 +152,7 @@ $categorias = $pdo->query("SELECT * FROM Categorias")->fetchAll(PDO::FETCH_ASSOC
       </div>
     </div>
 
-    <!-- Formulario agregar categoría -->
+    
     <div class="col-lg-6">
       <div class="card border border-dark text-dark rounded p-4">
         <h2 class="text-center mb-4">Agregar nueva categoría</h2>

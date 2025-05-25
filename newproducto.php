@@ -1,11 +1,11 @@
 <?php
-// newproducto.php
+session_start();
 
 // Configuración de la conexión
 $host = "localhost";
 $dbname = "MiPC5";
-$user = "root";    // Cambia aquí tu usuario de MySQL
-$pass = "1234";    // Cambia aquí tu contraseña
+$user = "root";    
+$pass = "1234";    
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
@@ -190,7 +190,7 @@ $categorias = obtenerCategorias($pdo);
   <div class="row">
     
   <div class="col-lg-6 mb-4 " >
-    <<div class="card border border-dark text-dark rounded p-4" style="max-height: 400px; overflow-y: auto;">
+    <div class="card border border-dark text-dark rounded p-4" style="max-height: 400px; overflow-y: auto;">
     <h2>Lista de Productos</h2>
 
     <input type="text" id="buscadorProductos" class="form-control mb-3" placeholder="Buscar productos...">
@@ -316,7 +316,7 @@ $categorias = obtenerCategorias($pdo);
       // Busca texto en todas las celdas de la fila (menos acciones y la imagen para mejorar rendimiento)
       const celdas = fila.querySelectorAll('td');
       let textoFila = '';
-      for(let i=0; i < celdas.length - 2; i++) { // menos últimos 2 cols (Imagen, Acciones)
+      for(let i=0; i < celdas.length - 2; i++) { 
         textoFila += celdas[i].textContent.toLowerCase() + ' ';
       }
 

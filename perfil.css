@@ -1,6 +1,6 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #D3D3D3;  /* Fondo LightGray */
+    background-color: #D3D3D3;  
     color: #333333;
     margin: 0;
     padding: 0;
@@ -23,8 +23,8 @@ body {
 }
 
 .profile-icon {
-    font-size: 80px;  /* Tamaño grande del ícono */
-    color: #444444;   /* Color gris oscuro */
+    font-size: 80px;  
+    color: #444444;   
     margin-bottom: 20px;
 }
 
@@ -44,7 +44,7 @@ body {
 
 .profile-item span {
     font-weight: bold;
-    color: #333333;  /* Color negro para el texto destacado */
+    color: #333333;  
 }
 
 .btn-back {

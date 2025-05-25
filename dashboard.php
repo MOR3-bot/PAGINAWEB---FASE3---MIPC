@@ -7,7 +7,7 @@ if (!isset($_SESSION['UsuarioID'])) {
     exit;
 }
 
-// 2. Verificar rol del usuario
+// Verificar rol del usuario
 $roles_permitidos = ['Administrador', 'Moderador'];
 
 if (!isset($_SESSION['RolNombre']) || !in_array($_SESSION['RolNombre'], $roles_permitidos)) {
@@ -20,8 +20,8 @@ if (!isset($_SESSION['RolNombre']) || !in_array($_SESSION['RolNombre'], $roles_p
 // Conexión a la base de datos
 $host = 'localhost';
 $db   = 'MiPC5';
-$user = 'root'; // Cambia según tu configuración
-$pass = '1234'; // Cambia según tu configuración
+$user = 'root'; 
+$pass = '1234'; 
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -157,21 +157,21 @@ $ventas = $pdo->query($sql_ventas)->fetchAll();
         <h2 id="tituloContenido">Contenido Principal</h2>
         <div id="reportesContent" class="d-none d-flex flex-column gap-4">
 
-          <!-- Contenedor para la primera gráfica -->
+          
           <div class="card">
             <div class="card-body">
               <canvas id="grafica1" height="150" class="w-100"></canvas>
             </div>
           </div>
 
-          <!-- Contenedor para la segunda gráfica -->
+          
           <div class="card">
             <div class="card-body">
               <canvas id="grafica2" height="150" class="w-100"></canvas>
             </div>
           </div>
 
-          <!-- Tabla -->
+          
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Tabla de Datos</h4>
@@ -185,7 +185,7 @@ $ventas = $pdo->query($sql_ventas)->fetchAll();
                     </tr>
                   </thead>
                   <tbody id="tablaDatos">
-                    <!-- Se llena con JS -->
+                   
                   </tbody>
                 </table>
               </div>
@@ -199,7 +199,7 @@ $ventas = $pdo->query($sql_ventas)->fetchAll();
 </div>
 
 
-<!-- Datos en JavaScript -->
+
 <script>
 const datosInventario = <?= json_encode($inventario); ?>;
 const datosVentas = <?= json_encode($ventas); ?>;

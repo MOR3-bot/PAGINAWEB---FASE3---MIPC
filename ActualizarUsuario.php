@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Conexión a la base de datos
 $conexion = new mysqli("localhost", "root", "", "MiPC5");
 if ($conexion->connect_error) {

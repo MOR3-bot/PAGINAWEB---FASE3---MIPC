@@ -43,8 +43,8 @@ if ($resultado->num_rows == 1) {
     $_SESSION['UsuarioID'] = $user['UsuarioID'];
     $_SESSION['NombreUsuario'] = $user['NombreUsuario'];
     $_SESSION['ImagenPerfil'] = $user['ImagenPerfil'] ?? 'uploads/profile photos/default_profile.png';
-    $_SESSION['RolID'] = $user['RolID'];         // El id del rol (ej. 1)
-    $_SESSION['RolNombre'] = $user['NombreRol']; // El nombre del rol (ej. 'administrador')
+    $_SESSION['RolID'] = $user['RolID'];        
+    $_SESSION['RolNombre'] = $user['NombreRol']; 
 
 
 

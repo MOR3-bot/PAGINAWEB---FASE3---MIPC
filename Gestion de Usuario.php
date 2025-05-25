@@ -1,14 +1,14 @@
 <?php
 session_start();
-$usuarioID = $_SESSION['UsuarioID'] ?? 1; // Ajusta según tu sesión
+$usuarioID = $_SESSION['UsuarioID'] ?? 1; 
 
 if (isset($_POST['logout'])) {
     session_destroy();
-    header("Location: login.php");  // Cambia a la página de login real
+    header("Location: login.php");  
     exit();
 }
 
-// Conexión PDO
+
 $host = 'localhost';
 $db = 'MiPC5';
 $user = 'root';
@@ -262,10 +262,10 @@ $usuario = $stmt->fetch();
                 <button type="submit" class="btn btn-primary mt-2">Cambiar foto</button>
             </form>
 
-            <!-- Botón cambiar contraseña -->
+            
             <button type="button" class="btn btn-secondary mt-3" onclick="togglePasswordForm()">Cambiar contraseña</button>
 
-            <!-- Formulario cambio contraseña -->
+            
             <form method="post" class="mt-3" id="passwordForm" style="display: none;">
                 <input type="hidden" name="cambiar_contrasena" value="1">
                 <div class="mb-2">
@@ -350,7 +350,7 @@ $usuario = $stmt->fetch();
 </div>
 <footer>
   <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
-  <a class="nav-link active mx-3" href="Quienes_somos.html">
+  <a class="nav-link active mx-3" href="Quienes_somos.php">
      <h6>saber mas de nosotros</h6>
   </a>
 

@@ -19,8 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $apellidos = trim($_POST['apellidos']);
     $nombreUsuario = trim($_POST['nombreUsuario']);
     $email = trim($_POST['email']);
-    $contrasena = $_POST['contrasena'];  // No hacer trim para contraseña
-    $rolID = 3; // Rol por defecto: Usuario
+    $contrasena = $_POST['contrasena'];  
+    $rolID = 3; 
 
     // Validar campos básicos
     if (!$nombre || !$apellidos || !$nombreUsuario || !$email || !$contrasena) {

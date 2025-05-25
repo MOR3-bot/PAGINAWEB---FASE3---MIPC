@@ -7,7 +7,7 @@ if (!isset($_SESSION['UsuarioID'])) {
     exit;
 }
 
-// 2. Verificar rol del usuario
+// Verificar rol del usuario
 $roles_permitidos = ['Administrador', 'Moderador'];
 
 if (!isset($_SESSION['RolNombre']) || !in_array($_SESSION['RolNombre'], $roles_permitidos)) {
@@ -111,18 +111,7 @@ try {
     </tbody>
   </table>
 
-  <form method="POST" class="mt-3">
-    <label for="EstadoID" class="form-label">Cambiar estado del pedido:</label>
-    <select name="EstadoID" id="EstadoID" class="form-select w-auto d-inline-block me-2">
-      <?php foreach ($estados as $estado): ?>
-        <option value="<?= $estado['EstadoID'] ?>" <?= $estado['EstadoID'] == $pedido['EstadoID'] ? 'selected' : '' ?>>
-          <?= htmlspecialchars($estado['Nombre']) ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
-    <button type="submit" class="btn btn-primary">Actualizar estado</button>
-  </form>
-
+  
   <a href="editar_pedidos.php" class="btn btn-secondary mt-3">Volver a administración de pedidos</a>
 </div>
 

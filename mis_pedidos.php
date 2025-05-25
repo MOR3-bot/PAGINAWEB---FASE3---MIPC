@@ -96,7 +96,6 @@ try {
 <div class="container mt-4">
   <h2>Mis Pedidos</h2>
 
-  <!-- BLOQUE DE NOTIFICACIONES DE PEDIDOS FINALIZADOS -->
   <?php foreach ($pedidos as $pedido): ?>
     <?php if ($pedido['Estado'] === 'Finalizado'): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -106,7 +105,6 @@ try {
     <?php endif; ?>
   <?php endforeach; ?>
 
-  <!-- NOTIFICACIONES -->
   <?php foreach ($notificaciones as $notif): ?>
     <div class="alert alert-info alert-dismissible fade show" role="alert">
       <?= $notif['Mensaje'] ?>
@@ -117,7 +115,6 @@ try {
     </div>
   <?php endforeach; ?>
 
-  <!-- TABLA DE PEDIDOS -->
   <table class="table table-bordered mt-3">
     <thead class="table-dark">
   <tr>
@@ -125,7 +122,7 @@ try {
     <th>Fecha</th>
     <th>Total</th>
     <th>Estado</th>
-    <th>Detalles</th> <!-- Nueva columna -->
+    <th>Detalles</th> 
   </tr>
 </thead>
 <tbody>
@@ -149,16 +146,7 @@ try {
 </tbody>
   </table>
 </div>
-<footer>
-  <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
-  <a class="nav-link active mx-3" href="Quienes_somos.html">
-     <h6>saber mas de nosotros</h6>
-  </a>
 
-  <a class="nav-link active mx-3" href="Contactanos.php">
-    <h6>contactanos</h6>
-  </a>
-</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

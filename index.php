@@ -10,8 +10,8 @@ if (!isset($_SESSION['UsuarioID'])) {
 // Conexión a la base de datos (ajusta usuario y contraseña)
 $host = "localhost";
 $dbname = "MiPC5";
-$user = "root";      // Cambia por tu usuario
-$pass = "1234";      // Cambia por tu contraseña
+$user = "root";      
+$pass = "1234";      
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
@@ -162,7 +162,7 @@ try {
 
 <footer>
   <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
-  <a class="nav-link active mx-3" href="Quienes_somos.html">
+  <a class="nav-link active mx-3" href="Quienes_somos.php">
      <h6>saber mas de nosotros</h6>
   </a>
 
