@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 if (!isset($_SESSION['UsuarioID'])) {
     $_SESSION['UsuarioID'] = 1;
 }
@@ -15,6 +14,7 @@ $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $terminoBusqueda = $_GET['buscar'] ?? '';
+$categoriaFiltro = $_GET['categoria'] ?? '';
 
 try {
     $pdo = new PDO($dsn, $user, $pass, [
@@ -26,33 +26,58 @@ try {
 
     $productosPorCategoria = [];
 
+    $ordenFiltro = $_GET['orden'] ?? '';
+
+    // Construir consulta dinámica
+    $query = "
+        SELECT ProductoID, Nombre, Descripcion, Precio, Stock, Imagen, CategoriaID 
+        FROM Productos 
+        WHERE 1=1
+    ";
+    $params = [];
+
     if ($terminoBusqueda !== '') {
-        $stmt = $pdo->prepare("
-            SELECT ProductoID, Nombre, Descripcion, Precio, Stock, Imagen, CategoriaID 
-            FROM Productos 
-            WHERE Nombre LIKE ? ORDER BY Nombre
-        ");
-        $stmt->execute(["%$terminoBusqueda%"]);
-        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($productos as $p) {
-            $productosPorCategoria[$p['CategoriaID']][] = $p;
-        }
-
-        $categorias = array_filter($categorias, fn($cat) => isset($productosPorCategoria[$cat['CategoriaID']]));
-
-    } else {
-        $stmt = $pdo->prepare("
-            SELECT ProductoID, Nombre, Descripcion, Precio, Stock, Imagen 
-            FROM Productos 
-            WHERE CategoriaID = ? ORDER BY Nombre
-        ");
-
-        foreach ($categorias as $cat) {
-            $stmt->execute([$cat['CategoriaID']]);
-            $productosPorCategoria[$cat['CategoriaID']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
+        $query .= " AND Nombre LIKE ? ";
+        $params[] = "%$terminoBusqueda%";
     }
+    if ($categoriaFiltro !== '' && $categoriaFiltro !== 'todas') {
+        $query .= " AND CategoriaID = ? ";
+        $params[] = $categoriaFiltro;
+    }
+
+    if ($ordenFiltro === 'mas_vendidos') {
+    $query = "
+        SELECT p.ProductoID, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.CategoriaID,
+               COALESCE(SUM(dp.Cantidad), 0) AS TotalVendidos
+        FROM Productos p
+        LEFT JOIN DetallesPedido dp ON p.ProductoID = dp.ProductoID
+        WHERE 1=1
+    ";
+
+    if ($terminoBusqueda !== '') {
+        $query .= " AND p.Nombre LIKE ? ";
+    }
+    if ($categoriaFiltro !== '' && $categoriaFiltro !== 'todas') {
+        $query .= " AND p.CategoriaID = ? ";
+    }
+
+    $query .= " GROUP BY p.ProductoID ORDER BY TotalVendidos DESC";
+} else {
+    $query .= " ORDER BY Nombre";
+}
+
+
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    foreach ($productos as $p) {
+        $productosPorCategoria[$p['CategoriaID']][] = $p;
+    }
+
+    // Filtrar categorías solo a las que tienen productos
+    $categorias = array_filter($categorias, fn($cat) => isset($productosPorCategoria[$cat['CategoriaID']]));
 
 } catch (PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
@@ -64,53 +89,60 @@ try {
   <meta charset="UTF-8">
   <title>Lista de Productos</title>
   <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="dashboard.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
-  <div class="container-fluid">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
     <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-         <img src="images/17654.png" class="barras rounded" alt="">
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="index.php">inicio</a></li>
-            <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
-        </ul>
-    </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="Gestion de Usuario.php"> 
-            <img src="images/6063673.png" class="rounded" alt=""> 
-            <h6>cuenta</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="lista_de_productos.php"> 
-            <img src="images/3144456.png" class="rounded" alt=""> 
-            <h6>compra</h6>
-          </a>
-        </li>
-
-        <?php if (isset($_SESSION['RolNombre']) && 
-                  ($_SESSION['RolNombre'] === 'Administrador' || $_SESSION['RolNombre'] === 'Moderador')): ?>
-          <li class="nav-item">
-            <a class="nav-link active mx-3" aria-current="page" href="dashboard.php"> 
-              <img src="images/30240.png" class="rounded" alt=""> 
-              <h6>admin</h6>
-            </a>
-          </li>
-        <?php endif; ?>
-
+      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="images/17654.png" class="barras rounded" alt="Menú" style="width: 30px; height: 30px;">
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="index.php">inicio</a></li>
+        <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
       </ul>
     </div>
-  </div>
+      <div class="mx-auto text-center">
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+          <img src="images/mipc.png" alt="MiPC" style="height: 50px; margin-right: 10px;">
+          <h4 class="mb-0 fw-bold" style="color: #000;">MIPC</h4>
+        </a>
+      </div>
+  <div class="d-flex align-items-center">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="Gestion de Usuario.php">
+              <img src="images/6063673.png" class="rounded" alt="" >
+              <h6>cuenta</h6>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="lista_de_productos.php">
+              <img src="images/3144456.png" class="rounded" alt="">
+              <h6>compra</h6>
+            </a>
+          </li>
+          <?php if (isset($_SESSION['RolNombre']) && 
+                    ($_SESSION['RolNombre'] === 'Administrador' || $_SESSION['RolNombre'] === 'Moderador')): ?>
+            <li class="nav-item">
+              <a class="nav-link active mx-2" href="dashboard.php">
+                <img src="images/30240.png" class="rounded" alt="" >
+                <h6>admin</h6>
+              </a>
+            </li>
+          <?php endif; ?>
+        </ul>
+      </div>
+    </div>
+ </div>
 </nav>
 
 <div class="container mt-5">
@@ -118,12 +150,28 @@ try {
 
   <form class="d-flex mb-4" method="GET" action="">
     <input class="form-control me-2" type="search" name="buscar" placeholder="Buscar..." value="<?= htmlspecialchars($terminoBusqueda) ?>">
+
+    <select name="categoria" class="form-select me-2" style="max-width: 200px;">
+      <option value="todas" <?= ($categoriaFiltro === 'todas' || $categoriaFiltro === '') ? 'selected' : '' ?>>Todas las categorías</option>
+      <?php foreach ($categorias as $cat): ?>
+        <option value="<?= $cat['CategoriaID'] ?>" <?= ($categoriaFiltro == $cat['CategoriaID']) ? 'selected' : '' ?>>
+          <?= htmlspecialchars($cat['Nombre']) ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+
+    <select name="orden" class="form-select me-2" style="max-width: 200px;">
+  <option value="">Ordenar por...</option>
+  <option value="mas_vendidos" <?= ($ordenFiltro === 'mas_vendidos') ? 'selected' : '' ?>>Más vendidos</option>
+</select>
+
+
     <button class="btn btn-primary" type="submit">Buscar</button>
   </form>
 
   <div class="text-end mb-3">
-    <a href="carrito.php" class="btn btn-success position-relative">
-      🛒 Carrito 
+    <a href="carrito.php" class="btn btn-danger border border-warning position-relative">
+      <img src="images/icone-de-panier-rouge.png" alt="Carrito" class="img-fluid" style="max-width: 24px;">
     </a>
   </div>
 
@@ -154,8 +202,8 @@ try {
     <?php endforeach; ?>
   <?php endif; ?>
 </div>
+
 <footer>
-  
   <p>&copy; 2025 MIPC. Todos los derechos reservados.</p>
   <a class="nav-link active mx-3" href="Quienes_somos.php">
      <h6>saber mas de nosotros</h6>
@@ -165,6 +213,7 @@ try {
     <h6>contactanos</h6>
   </a>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // Agregar producto al carrito
@@ -182,14 +231,13 @@ document.querySelectorAll('.agregar-carrito').forEach(btn => {
     .then(data => {
       if (data.success) {
         alert("Producto agregado al carrito");
-        } else {
+      } else {
         alert("Error: " + data.message);
       }
     })
     .catch(() => alert("Error al agregar al carrito"));
   });
 });
-
 </script>
 
 </body>

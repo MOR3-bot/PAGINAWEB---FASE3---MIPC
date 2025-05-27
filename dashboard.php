@@ -9,10 +9,7 @@ if (!isset($_SESSION['UsuarioID'])) {
 
 // Verificar rol del usuario
 $roles_permitidos = ['Administrador', 'Moderador'];
-
 if (!isset($_SESSION['RolNombre']) || !in_array($_SESSION['RolNombre'], $roles_permitidos)) {
-    // Usuario sin permiso para ver el dashboard
-    // Puedes redirigir a una página de error o al index normal
     header("Location: index.php");
     exit;
 }
@@ -37,9 +34,15 @@ try {
     exit;
 }
 
-// Recuperar nombre de usuario e imagen desde la sesión
-$usuario_nombre = $_SESSION['NombreUsuario'] ?? '';
-$imagenPerfil = $_SESSION['ImagenPerfil'] ?? '';
+// Obtener información actualizada del usuario
+$usuarioID = $_SESSION['UsuarioID'];
+$sql_usuario = "SELECT NombreUsuario, ImagenPerfil FROM Usuarios WHERE UsuarioID = ?";
+$stmt = $pdo->prepare($sql_usuario);
+$stmt->execute([$usuarioID]);
+$usuario = $stmt->fetch();
+
+$usuario_nombre = $usuario['NombreUsuario'];
+$imagenPerfil = $usuario['ImagenPerfil'];
 $rutaImagen = (!empty($imagenPerfil) && file_exists($imagenPerfil)) ? $imagenPerfil : 'images/default_profile.png';
 
 // Consultar Inventario
@@ -58,6 +61,7 @@ $sql_ventas = "
 $ventas = $pdo->query($sql_ventas)->fetchAll();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -70,43 +74,55 @@ $ventas = $pdo->query($sql_ventas)->fetchAll();
 </head>
 <body>
 
- <nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
     <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-         <img src="images/17654.png" class="barras rounded" alt="">
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="index.php">inicio</a></li>
-            <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
-        </ul>
-    </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="Gestion de Usuario.php"> 
-            <img src="images/6063673.png" class="rounded" alt=""> 
-            <h6>cuenta</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="lista_de_productos.php"> 
-            <img src="images/3144456.png" class="rounded" alt=""> 
-            <h6>compra</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="dashboard.php"> 
-            <img src="images/30240.png" class="rounded" alt=""> 
-            <h6>admin</h6>
-          </a>
-        </li>
+      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="images/17654.png" class="barras rounded" alt="Menú" style="width: 30px; height: 30px;">
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="index.php">inicio</a></li>
+        <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
       </ul>
     </div>
-  </div>
+      <div class="mx-auto text-center">
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+          <img src="images/mipc.png" alt="MiPC" style="height: 50px; margin-right: 10px;">
+          <h4 class="mb-0 fw-bold" style="color: #000;">MIPC</h4>
+        </a>
+      </div>
+  <div class="d-flex align-items-center">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="Gestion de Usuario.php">
+              <img src="images/6063673.png" class="rounded" alt="" >
+              <h6>cuenta</h6>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="lista_de_productos.php">
+              <img src="images/3144456.png" class="rounded" alt="">
+              <h6>compra</h6>
+            </a>
+          </li>
+          <?php if (isset($_SESSION['RolNombre']) && 
+                    ($_SESSION['RolNombre'] === 'Administrador' || $_SESSION['RolNombre'] === 'Moderador')): ?>
+            <li class="nav-item">
+              <a class="nav-link active mx-2" href="dashboard.php">
+                <img src="images/30240.png" class="rounded" alt="" >
+                <h6>admin</h6>
+              </a>
+            </li>
+          <?php endif; ?>
+        </ul>
+      </div>
+    </div>
+ </div>
 </nav>
 
 <div class="container min-vh-100 d-flex flex-column mt-4">

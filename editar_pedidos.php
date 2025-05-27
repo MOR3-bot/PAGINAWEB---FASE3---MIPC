@@ -76,15 +76,32 @@ try {
     $mensaje = "✅ Estado del pedido #$pedidoID actualizado correctamente.";
 }
 
+$estadoFiltro = isset($_GET['estado_filtro']) ? (int)$_GET['estado_filtro'] : 0;
 
     // Obtener pedidos para mostrar
-    $pedidos = $pdo->query("
-        SELECT p.PedidoID, u.NombreUsuario, p.FechaPedido, p.Total, e.Nombre AS Estado, p.EstadoID
-        FROM Pedidos p
-        JOIN Usuarios u ON p.UsuarioID = u.UsuarioID
-        JOIN Estados e ON p.EstadoID = e.EstadoID
-        ORDER BY p.FechaPedido DESC
-    ")->fetchAll();
+$sqlPedidos = "
+    SELECT p.PedidoID, u.NombreUsuario, p.FechaPedido, p.Total, e.Nombre AS Estado, p.EstadoID
+    FROM Pedidos p
+    JOIN Usuarios u ON p.UsuarioID = u.UsuarioID
+    JOIN Estados e ON p.EstadoID = e.EstadoID
+";
+
+if ($estadoFiltro > 0) {
+    $sqlPedidos .= " WHERE p.EstadoID = :estadoFiltro";
+}
+
+$sqlPedidos .= " ORDER BY p.FechaPedido DESC";
+
+$stmtPedidos = $pdo->prepare($sqlPedidos);
+
+if ($estadoFiltro > 0) {
+    $stmtPedidos->execute(['estadoFiltro' => $estadoFiltro]);
+} else {
+    $stmtPedidos->execute();
+}
+
+$pedidos = $stmtPedidos->fetchAll();
+
 
     // Obtener lista de estados
     $estados = $pdo->query("SELECT * FROM Estados")->fetchAll();
@@ -110,43 +127,55 @@ try {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
- <nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg shadow bg-body-tertiary rounded">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
     <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-         <img src="images/17654.png" class="barras rounded" alt="">
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="index.php">inicio</a></li>
-            <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
-        </ul>
-    </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="Gestion de Usuario.php"> 
-            <img src="images/6063673.png" class="rounded" alt=""> 
-            <h6>cuenta</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="lista_de_productos.php"> 
-            <img src="images/3144456.png" class="rounded" alt=""> 
-            <h6>compra</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="dashboard.php"> 
-            <img src="images/30240.png" class="rounded" alt=""> 
-            <h6>admin</h6>
-          </a>
-        </li>
+      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="images/17654.png" class="barras rounded" alt="Menú" style="width: 30px; height: 30px;">
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="index.php">inicio</a></li>
+        <li><a class="dropdown-item" href="mis_pedidos.php">mis pedidos</a></li>
       </ul>
     </div>
-  </div>
+      <div class="mx-auto text-center">
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+          <img src="images/mipc.png" alt="MiPC" style="height: 50px; margin-right: 10px;">
+          <h4 class="mb-0 fw-bold" style="color: #000;">MIPC</h4>
+        </a>
+      </div>
+  <div class="d-flex align-items-center">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="Gestion de Usuario.php">
+              <img src="images/6063673.png" class="rounded" alt="" >
+              <h6>cuenta</h6>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active mx-2" href="lista_de_productos.php">
+              <img src="images/3144456.png" class="rounded" alt="">
+              <h6>compra</h6>
+            </a>
+          </li>
+          <?php if (isset($_SESSION['RolNombre']) && 
+                    ($_SESSION['RolNombre'] === 'Administrador' || $_SESSION['RolNombre'] === 'Moderador')): ?>
+            <li class="nav-item">
+              <a class="nav-link active mx-2" href="dashboard.php">
+                <img src="images/30240.png" class="rounded" alt="" >
+                <h6>admin</h6>
+              </a>
+            </li>
+          <?php endif; ?>
+        </ul>
+      </div>
+    </div>
+ </div>
 </nav>
 
 <div class="container mt-4">
@@ -158,6 +187,22 @@ try {
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
   <?php endif; ?>
+
+  <form method="GET" class="row g-3 mb-4">
+  <div class="col-auto">
+    <label for="estado_filtro" class="form-label">Filtrar por estado:</label>
+  </div>
+  <div class="col-auto">
+    <select name="estado_filtro" id="estado_filtro" class="form-select" onchange="this.form.submit()">
+      <option value="0">Todos</option>
+      <?php foreach ($estados as $estado): ?>
+        <option value="<?= $estado['EstadoID'] ?>" <?= $estadoFiltro == $estado['EstadoID'] ? 'selected' : '' ?>>
+          <?= $estado['Nombre'] ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+</form>
 
 <table class="table table-bordered">
   <thead class="table-dark">
